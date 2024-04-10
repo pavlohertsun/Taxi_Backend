@@ -11,17 +11,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PricingService {
-    @Value("${google.maps.api.key}")
-    private String apiKey;
+public class RoutLengthService {
     private GeoApiContext geoApiContext;
 
-    public PricingService(){
+    public RoutLengthService(){
         this.geoApiContext = new GeoApiContext.Builder()
                 .apiKey("AIzaSyCI1dVonXJS7Vj5zrfng6YihG8IBk4z4oU").build();
     }
 
-    public double calculatePrice(String startAddress, String endAddress) {
+    public double findRoutLength(String startAddress, String endAddress) {
         try {
             DirectionsResult result = DirectionsApi.newRequest(geoApiContext)
                     .origin(startAddress)

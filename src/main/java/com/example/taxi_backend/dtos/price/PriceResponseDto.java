@@ -1,9 +1,9 @@
-package com.example.taxi_backend.dtos.trip;
+package com.example.taxi_backend.dtos.price;
 
-public class TripResponseDto {
+public class PriceResponseDto {
     private double price;
 
-    public TripResponseDto(double price) {
+    public PriceResponseDto(double price) {
         this.price = price;
     }
 

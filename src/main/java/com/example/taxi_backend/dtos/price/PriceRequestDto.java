@@ -1,6 +1,6 @@
-package com.example.taxi_backend.dtos.trip;
+package com.example.taxi_backend.dtos.price;
 
-public class TripRequestDto {
+public class PriceRequestDto {
     private String startAddress;
     private String endAddress;
     private String rate;
