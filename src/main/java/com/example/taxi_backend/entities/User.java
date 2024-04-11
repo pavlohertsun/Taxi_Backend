@@ -16,10 +16,16 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    private String name;
+    private String surname;
 
+    @Column(name = "email")
     private String username;
+    @Column(name = "phone_number")
+    private String phoneNumber;
     private String password;
     private Role role;
+    private int rating;
 
     public String getUsername() {
         return username;
@@ -57,6 +63,37 @@ public class User {
 //    private Set<Trip> trips = new HashSet<>();
 
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public void setRating(int rating) {
+        this.rating = rating;
+    }
 
     public enum Role{
         USER,

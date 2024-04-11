@@ -5,6 +5,7 @@ CREATE TABLE users(
   email VARCHAR(50),
   phone_number VARCHAR(20),
   password VARCHAR(150),
+  role INT,
   rating INT
 );
 

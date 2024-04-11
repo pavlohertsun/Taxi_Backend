@@ -1,12 +1,11 @@
 package com.example.taxi_backend.controllers;
 
-import com.example.taxi_backend.dtos.AuthResponseDto;
-import com.example.taxi_backend.dtos.LoginDto;
-import com.example.taxi_backend.dtos.RegisterDto;
+import com.example.taxi_backend.dtos.*;
 import com.example.taxi_backend.entities.User;
 import com.example.taxi_backend.repositories.UserRepository;
 import com.example.taxi_backend.security.JwtService;
 import com.example.taxi_backend.security.UserService;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +13,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 
 @RestController
@@ -38,34 +36,31 @@ public class AuthController {
         this.jwtService = jwtGenerator;
         this.userRepository = userRepository;
     }
-    @PostMapping("login")
-    public ResponseEntity<?> authUser(@RequestBody LoginDto loginUser) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginUser.getUsername(),
-                            loginUser.getPassword()));
 
-            return ResponseEntity
-                    .ok()
-                    .body(
-                            new AuthResponseDto(jwtService.createToken(loginUser).get()
-                                    , userService.authUserRequest(loginUser))
-                    );
-        } catch (AuthenticationException e) {
-            return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid username or password");
-        }
+    @PostMapping("login")
+    public ResponseEntity<AuthResponseDto> authUser(@RequestBody LoginDto loginDto) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginDto.getUsername(),
+                        loginDto.getPassword()));
+        return ResponseEntity
+                .ok()
+                .body(
+                        new AuthResponseDto(jwtService.createToken(loginDto).get()
+                                , userService.authUserRequest(loginDto))
+                );
     }
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
         User user = new User();
-        user.setUsername(registerDto.getEmail());
+
+        user.setName(registerDto.getName());
+        user.setSurname(registerDto.getSurname());
+        user.setUsername(registerDto.getUsername());
+        user.setPhoneNumber(registerDto.getPhoneNumber());
         user.setPassword(passwordEncoder.encode((registerDto.getPassword())));
-
         user.setRole(User.Role.USER);
-
+        user.setRating(registerDto.getRating());
         userRepository.save(user);
 
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);
