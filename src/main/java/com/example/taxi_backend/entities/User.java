@@ -63,6 +63,14 @@ public class User {
 //    private Set<Trip> trips = new HashSet<>();
 
 
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }

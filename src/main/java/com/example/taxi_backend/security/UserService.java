@@ -32,6 +32,6 @@ public class UserService implements UserDetailsService {
     public UserDto authUserRequest(LoginDto loginUser){
         User user = userRepository.findByUsername(loginUser.getUsername()).get();
 
-        return new UserDto(user.getUsername(),user.getRole());
+        return new UserDto(user.getId(), user.getUsername(),user.getRole());
     }
 }
