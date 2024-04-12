@@ -1,21 +1,19 @@
 package com.example.taxi_backend.controllers;
 
 import com.example.taxi_backend.dtos.*;
+import com.example.taxi_backend.dtos.auth_responce.AuthResponseDto;
+import com.example.taxi_backend.entities.Role;
 import com.example.taxi_backend.entities.User;
 import com.example.taxi_backend.repositories.UserRepository;
 import com.example.taxi_backend.security.JwtService;
 import com.example.taxi_backend.security.UserService;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
 
 
 @RestController
@@ -53,14 +51,9 @@ public class AuthController {
     @PostMapping("register")
     public ResponseEntity<String> register(@RequestBody RegisterDto registerDto) {
         User user = new User();
-
-        user.setName(registerDto.getName());
-        user.setSurname(registerDto.getSurname());
         user.setUsername(registerDto.getUsername());
-        user.setPhoneNumber(registerDto.getPhoneNumber());
         user.setPassword(passwordEncoder.encode((registerDto.getPassword())));
-        user.setRole(User.Role.USER);
-        user.setRating(registerDto.getRating());
+        user.setRole(registerDto.getRole().equals("User") ? Role.USER : Role.DRIVER);
         userRepository.save(user);
 
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);

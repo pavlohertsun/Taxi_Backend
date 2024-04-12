@@ -1,7 +1,7 @@
 package com.example.taxi_backend.security;
 
 import com.example.taxi_backend.dtos.LoginDto;
-import com.example.taxi_backend.dtos.UserDto;
+import com.example.taxi_backend.dtos.user.UserDto;
 import com.example.taxi_backend.entities.User;
 import com.example.taxi_backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;

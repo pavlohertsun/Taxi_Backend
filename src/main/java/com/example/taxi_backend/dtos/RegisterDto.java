@@ -2,20 +2,14 @@ package com.example.taxi_backend.dtos;
 
 
 public class RegisterDto {
-    private String name;
-    private String surname;
     private String username;
     private String password;
-    private String phoneNumber;
     private String role;
-    private int rating;
 
-    public String getName() {
-        return name;
-    }
-
-    public String getSurname() {
-        return surname;
+    public RegisterDto(String username, String password, String role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
     }
 
     public String getUsername() {
@@ -26,15 +20,8 @@ public class RegisterDto {
         return password;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
     public String getRole() {
         return role;
     }
 
-    public int getRating() {
-        return rating;
-    }
 }

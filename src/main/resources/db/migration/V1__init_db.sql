@@ -1,12 +1,10 @@
-CREATE TABLE users(
+CREATE TABLE customers(
   id BIGINT PRIMARY KEY,
   name VARCHAR(50),
   surname VARCHAR(50),
   email VARCHAR(50),
   phone_number VARCHAR(20),
-  password VARCHAR(150),
-  role INT,
-  rating INT
+  rating DECIMAL(3,2)
 );
 
 CREATE TABLE drivers(
@@ -16,8 +14,7 @@ CREATE TABLE drivers(
   email VARCHAR(50),
   phone_number VARCHAR(50),
   license VARCHAR(50),
-  balance NUMERIC,
-  password VARCHAR(150)
+  balance NUMERIC
 );
 
 CREATE TABLE trips(
@@ -30,7 +27,7 @@ CREATE TABLE trips(
   status VARCHAR(20) CHECK(status IN ('In progress', 'Completed', 'Cancelled')),
   rate VARCHAR(20) CHECK(rate IN ('Low', 'Normal', 'High')),
   description TEXT,
-  user_id BIGINT,
+  customer_id BIGINT,
   driver_id BIGINT
 );
 
@@ -99,17 +96,26 @@ CREATE TABLE support_requests(
   date TIMESTAMP,
   description TEXT,
   employee_id BIGINT,
-  user_id BIGINT,
+  customer_id BIGINT,
   driver_id BIGINT
 );
 
 CREATE TABLE drivers_rating(
   id BIGINT PRIMARY KEY,
+  rating DECIMAL(3,2),
   trips_count INT,
   comments TEXT
 );
 
-CREATE SEQUENCE users_seq START 1;
+CREATE TABLE users(
+    id BIGINT PRIMARY KEY,
+    username VARCHAR(50),
+    password VARCHAR(150),
+    reg_date TIMESTAMP,
+    role INT
+);
+
+CREATE SEQUENCE customers_seq START 1;
 CREATE SEQUENCE drivers_seq START 1;
 CREATE SEQUENCE trips_seq START 1;
 CREATE SEQUENCE cars_seq START 1;
@@ -122,8 +128,9 @@ CREATE SEQUENCE drivers_payment_seq START 1;
 CREATE SEQUENCE employees_seq START 1;
 CREATE SEQUENCE support_requests_seq START 1;
 CREATE SEQUENCE drivers_rating_seq START 1;
+CREATE SEQUENCE users_seq START 1;
 
-ALTER TABLE users ALTER COLUMN id SET DEFAULT nextval('users_seq');
+ALTER TABLE customers ALTER COLUMN id SET DEFAULT nextval('customers_seq');
 ALTER TABLE drivers ALTER COLUMN id SET DEFAULT nextval('drivers_seq');
 ALTER TABLE trips ALTER COLUMN id SET DEFAULT nextval('trips_seq');
 ALTER TABLE cars ALTER COLUMN id SET DEFAULT nextval('cars_seq');
@@ -136,11 +143,12 @@ ALTER TABLE drivers_payment ALTER COLUMN id SET DEFAULT nextval('drivers_payment
 ALTER TABLE employees ALTER COLUMN id SET DEFAULT nextval('employees_seq');
 ALTER TABLE support_requests ALTER COLUMN id SET DEFAULT nextval('support_requests_seq');
 ALTER TABLE drivers_rating ALTER COLUMN id SET DEFAULT nextval('drivers_rating_seq');
+ALTER TABLE users ALTER COLUMN id SET DEFAULT nextval('users_seq');
 
 ALTER TABLE trips
-ADD CONSTRAINT user_id_fk
-FOREIGN KEY (user_id)
-REFERENCES users(id);
+ADD CONSTRAINT customer_id_fk
+FOREIGN KEY (customer_id)
+REFERENCES customers(id);
 
 ALTER TABLE trips
 ADD CONSTRAINT driver_id_fk
@@ -189,8 +197,8 @@ REFERENCES employees(id);
 
 ALTER TABLE support_requests
 ADD CONSTRAINT users_id_fk
-FOREIGN KEY (user_id)
-REFERENCES users(id);
+FOREIGN KEY (customer_id)
+REFERENCES customers(id);
 
 ALTER TABLE support_requests
 ADD CONSTRAINT drivers_id_fk
@@ -201,3 +209,18 @@ ALTER TABLE drivers_rating
 ADD CONSTRAINT drivers_id_fk
 FOREIGN KEY (id)
 REFERENCES drivers(id);
+
+ALTER TABLE users
+ADD CONSTRAINT user_id_fk
+FOREIGN KEY (id)
+REFERENCES users(id);
+
+ALTER TABLE drivers
+ADD CONSTRAINT user_id_fk
+FOREIGN KEY (id)
+REFERENCES users(id);
+
+ALTER TABLE employees
+ADD CONSTRAINT user_id_fk
+FOREIGN KEY (id)
+REFERENCES users(id);

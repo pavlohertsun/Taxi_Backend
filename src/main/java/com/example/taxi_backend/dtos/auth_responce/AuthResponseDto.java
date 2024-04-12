@@ -1,4 +1,6 @@
-package com.example.taxi_backend.dtos;
+package com.example.taxi_backend.dtos.auth_responce;
+
+import com.example.taxi_backend.dtos.user.UserDto;
 
 public class AuthResponseDto {
     private JwtToken jwtToken;

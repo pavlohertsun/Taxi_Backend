@@ -1,17 +1,12 @@
 package com.example.taxi_backend.security;
 
-import com.example.taxi_backend.dtos.JwtToken;
+import com.example.taxi_backend.dtos.auth_responce.JwtToken;
 import com.example.taxi_backend.dtos.LoginDto;
-import com.example.taxi_backend.entities.User;
+import com.example.taxi_backend.entities.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -64,9 +59,9 @@ public class JwtService {
                 .parseClaimsJws(token)
                 .getBody();
     }
-    public Collection<User.Role> getRoles(String token){
+    public Collection<Role> getRoles(String token){
         List<String> roles = (List<String>) getClaims(token).get(ROLE_CLAIMS_FIELD);
-        return roles.stream().map(r -> User.Role.valueOf(r)).toList();
+        return roles.stream().map(r -> Role.valueOf(r)).toList();
     }
     public String getUsername(String token){
         return (String) getClaims(token).get(USERNAME_CLAIMS_FIELD);

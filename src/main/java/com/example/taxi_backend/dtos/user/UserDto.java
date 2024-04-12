@@ -1,14 +1,14 @@
-package com.example.taxi_backend.dtos;
+package com.example.taxi_backend.dtos.user;
 
-import com.example.taxi_backend.entities.User;
+import com.example.taxi_backend.entities.Role;
 
 public class UserDto {
     private long id;
     private String name;
-    private User.Role role;
+    private Role role;
 
 
-    public UserDto(long id, String name, User.Role role) {
+    public UserDto(long id, String name, Role role) {
         this.id = id;
         this.name = name;
         this.role = role;
@@ -30,11 +30,11 @@ public class UserDto {
         this.name = name;
     }
 
-    public User.Role getRole() {
+    public Role getRole() {
         return role;
     }
 
-    public void setRole(User.Role role) {
+    public void setRole(Role role) {
         this.role = role;
     }
 }
