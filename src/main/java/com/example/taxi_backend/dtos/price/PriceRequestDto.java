@@ -1,8 +1,10 @@
 package com.example.taxi_backend.dtos.price;
 
+import com.google.maps.model.LatLng;
+
 public class PriceRequestDto {
-    private String startAddress;
-    private String endAddress;
+    private LatLng startAddress;
+    private LatLng endAddress;
     private String rate;
 
     public String getRate() {
@@ -13,19 +15,19 @@ public class PriceRequestDto {
         this.rate = rate;
     }
 
-    public String getStartAddress() {
+    public LatLng getStartAddress() {
         return startAddress;
     }
 
-    public void setStartAddress(String startAddress) {
+    public void setStartAddress(LatLng startAddress) {
         this.startAddress = startAddress;
     }
 
-    public String getEndAddress() {
+    public LatLng getEndAddress() {
         return endAddress;
     }
 
-    public void setEndAddress(String endAddress) {
+    public void setEndAddress(LatLng endAddress) {
         this.endAddress = endAddress;
     }
 }

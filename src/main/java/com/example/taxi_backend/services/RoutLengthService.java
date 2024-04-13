@@ -6,6 +6,7 @@ import com.google.maps.DirectionsApi;
 import com.google.maps.GeoApiContext;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.Distance;
+import com.google.maps.model.LatLng;
 import com.google.maps.model.TravelMode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ public class RoutLengthService {
                 .apiKey("AIzaSyCI1dVonXJS7Vj5zrfng6YihG8IBk4z4oU").build();
     }
 
-    public double findRoutLength(String startAddress, String endAddress) {
+    public double findRoutLength(LatLng startAddress, LatLng endAddress) {
         try {
             DirectionsResult result = DirectionsApi.newRequest(geoApiContext)
                     .origin(startAddress)

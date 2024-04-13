@@ -27,6 +27,7 @@ dependencies {
     implementation ("io.jsonwebtoken:jjwt-impl:0.12.3")
     implementation ("io.jsonwebtoken:jjwt-jackson:0.12.3")
 
+    implementation ("org.springframework.boot:spring-boot-starter-websocket")
     implementation ("com.google.maps:google-maps-services:0.15.0")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")

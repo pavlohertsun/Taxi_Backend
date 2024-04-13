@@ -1,5 +1,6 @@
 package com.example.taxi_backend.entities;
 
+import com.example.taxi_backend.dtos.trip.TripRequestDto;
 import jakarta.persistence.*;
 
 import java.sql.Timestamp;
@@ -33,7 +34,6 @@ public class Trip {
     @ManyToOne
     @JoinColumn(name = "driver_id")
     private Driver driver;
-
 
     public long getId() {
         return id;
