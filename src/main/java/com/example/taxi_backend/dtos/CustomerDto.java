@@ -1,39 +1,45 @@
-package com.example.taxi_backend.entities;
+package com.example.taxi_backend.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.example.taxi_backend.entities.Customer;
+import com.example.taxi_backend.entities.Trip;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "customers")
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CustomerDto {
     private long id;
 
     private String name;
     private String surname;
 
     private String email;
-    @Column(name = "phone_number")
     private String phoneNumber;
     private double rating;
-    @JsonIgnore
-    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private Set<Trip> trips = new HashSet<>();
 
-    public Customer() {
+    public CustomerDto(Customer customer) {
+        this.id = customer.getId();
+        this.name = customer.getName();
+        this.surname = customer.getSurname();
+        this.email = customer.getEmail();
+        this.phoneNumber = customer.getPhoneNumber();
+        this.rating = customer.getRating();
+        this.trips = customer.getTrips();
     }
 
-    public Customer(String name, String surname, String email, String phoneNumber, double rating) {
+    public CustomerDto() {
+    }
+
+    public CustomerDto(long id, String name, String surname, String email, String phoneNumber, double rating, Set<Trip> trips) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.rating = rating;
+        this.trips = trips;
     }
 
     public long getId() {
@@ -90,18 +96,5 @@ public class Customer {
 
     public void setTrips(Set<Trip> trips) {
         this.trips = trips;
-    }
-
-    @Override
-    public String toString() {
-        return "Customer{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", surname='" + surname + '\'' +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", rating=" + rating +
-                ", trips=" + trips +
-                '}';
     }
 }

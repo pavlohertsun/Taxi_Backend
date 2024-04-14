@@ -1,5 +1,6 @@
 package com.example.taxi_backend.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -20,8 +21,8 @@ public class Driver {
     private String phoneNumber;
     private String license;
     private double balance;
-
-    @OneToMany(mappedBy = "driver")
+    @JsonIgnore
+    @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
     private Set<Trip> trips = new HashSet<>();
 
     public Driver() {
@@ -98,5 +99,19 @@ public class Driver {
 
     public void setTrips(Set<Trip> trips) {
         this.trips = trips;
+    }
+
+    @Override
+    public String toString() {
+        return "Driver{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", license='" + license + '\'' +
+                ", balance=" + balance +
+                ", trips=" + trips +
+                '}';
     }
 }

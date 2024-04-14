@@ -1,43 +1,18 @@
-package com.example.taxi_backend.entities;
-
-import com.example.taxi_backend.dtos.trip.TripRequestDto;
-import com.example.taxi_backend.repositories.DriverRepository;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+package com.example.taxi_backend.dtos.trip;
 
 import java.sql.Timestamp;
 
-@Entity
-@Table(name = "trips")
-public class Trip {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class TripRequestFromDriverDto {
     private long id;
-
-    @Column(name = "start_time")
     private Timestamp startTime;
-    @Column(name = "end_time")
-    private Timestamp endTime;
-
-    @Column(name = "start_point")
     private String startPoint;
-    @Column(name = "end_point")
     private String endPoint;
-
     private double price;
     private String status;
     private String rate;
     private String description;
-
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "driver_id")
-    private Driver driver;
+    private long customerId;
+    private long driverId;
 
     public long getId() {
         return id;
@@ -53,14 +28,6 @@ public class Trip {
 
     public void setStartTime(Timestamp startTime) {
         this.startTime = startTime;
-    }
-
-    public Timestamp getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(Timestamp endTime) {
-        this.endTime = endTime;
     }
 
     public String getStartPoint() {
@@ -111,19 +78,19 @@ public class Trip {
         this.description = description;
     }
 
-    public Customer getUser() {
-        return customer;
+    public long getCustomerId() {
+        return customerId;
     }
 
-    public void setUser(Customer customer) {
-        this.customer = customer;
+    public void setCustomerId(long customerId) {
+        this.customerId = customerId;
     }
 
-    public Driver getDriver() {
-        return this.driver;
+    public long getDriverId() {
+        return driverId;
     }
 
-    public void setDriver(Driver driver) {
-        this.driver = driver;
+    public void setDriverId(long driverId) {
+        this.driverId = driverId;
     }
 }
