@@ -29,8 +29,10 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(req ->
                         req
-                                .requestMatchers("/api/auth/**").permitAll()
-                                .anyRequest().authenticated()
+//                                .requestMatchers("/api/auth/**").permitAll()
+//                                .requestMatchers("/taxi").permitAll()
+//                                .anyRequest().authenticated()
+                                .anyRequest().permitAll()
                 )
                 .csrf(CsrfConfigurer::disable)
                 .cors(Customizer.withDefaults())

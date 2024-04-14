@@ -15,7 +15,7 @@ public class TripMapper {
     }
 
     public Trip mapTripDtoToEntity(TripRequestDto tripRequestDto){
-        Customer customer = customerRepository.getReferenceById(tripRequestDto.getCustomerId());
+        Customer customer = customerRepository.findById(tripRequestDto.getCustomerId()).get();
         Trip trip = new Trip();
 
         trip.setStartTime(tripRequestDto.getStartTime());

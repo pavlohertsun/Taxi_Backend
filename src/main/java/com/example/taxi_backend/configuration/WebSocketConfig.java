@@ -18,6 +18,6 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/taxi").setAllowedOrigins("*");
+        registry.addEndpoint("/taxi").setAllowedOrigins("http://localhost:4200");
     }
 }

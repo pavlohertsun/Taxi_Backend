@@ -20,7 +20,7 @@ public class Customer {
     private String phoneNumber;
     private double rating;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(mappedBy = "customer", fetch = FetchType.EAGER)
     private Set<Trip> trips = new HashSet<>();
 
     public Customer() {
@@ -88,5 +88,18 @@ public class Customer {
 
     public void setTrips(Set<Trip> trips) {
         this.trips = trips;
+    }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", surname='" + surname + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", rating=" + rating +
+                ", trips=" + trips +
+                '}';
     }
 }
