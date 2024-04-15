@@ -1,23 +1,15 @@
 package com.example.taxi_backend.dtos;
 
 import com.example.taxi_backend.entities.Customer;
-import com.example.taxi_backend.entities.Trip;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.*;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class CustomerDto {
     private long id;
-
     private String name;
     private String surname;
 
     private String email;
     private String phoneNumber;
     private double rating;
-    private Set<Trip> trips = new HashSet<>();
 
     public CustomerDto(Customer customer) {
         this.id = customer.getId();
@@ -26,20 +18,18 @@ public class CustomerDto {
         this.email = customer.getEmail();
         this.phoneNumber = customer.getPhoneNumber();
         this.rating = customer.getRating();
-        this.trips = customer.getTrips();
     }
 
     public CustomerDto() {
     }
 
-    public CustomerDto(long id, String name, String surname, String email, String phoneNumber, double rating, Set<Trip> trips) {
+    public CustomerDto(long id, String name, String surname, String email, String phoneNumber, double rating) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.rating = rating;
-        this.trips = trips;
     }
 
     public long getId() {
@@ -90,11 +80,4 @@ public class CustomerDto {
         this.rating = rating;
     }
 
-    public Set<Trip> getTrips() {
-        return trips;
-    }
-
-    public void setTrips(Set<Trip> trips) {
-        this.trips = trips;
-    }
 }
