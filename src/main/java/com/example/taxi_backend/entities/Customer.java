@@ -21,6 +21,8 @@ public class Customer {
     @Column(name = "phone_number")
     private String phoneNumber;
     private double rating;
+    private double balance;
+
     @JsonIgnore
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private Set<Trip> trips = new HashSet<>();
@@ -28,12 +30,13 @@ public class Customer {
     public Customer() {
     }
 
-    public Customer(String name, String surname, String email, String phoneNumber, double rating) {
+    public Customer(String name, String surname, String email, String phoneNumber, double rating, double balance) {
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.rating = rating;
+        this.balance = balance;
     }
 
     public long getId() {
@@ -82,6 +85,14 @@ public class Customer {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
     }
 
     public Set<Trip> getTrips() {

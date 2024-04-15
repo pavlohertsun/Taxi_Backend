@@ -1,37 +1,36 @@
 package com.example.taxi_backend.dtos;
 
-import com.example.taxi_backend.entities.Customer;
+import com.example.taxi_backend.entities.Driver;
 
-public class CustomerDto {
+public class DriverDto {
     private long id;
     private String name;
     private String surname;
     private String email;
     private String phoneNumber;
-    private double rating;
     private double balance;
-
-    public CustomerDto(Customer customer) {
-        this.id = customer.getId();
-        this.name = customer.getName();
-        this.surname = customer.getSurname();
-        this.email = customer.getEmail();
-        this.phoneNumber = customer.getPhoneNumber();
-        this.rating = customer.getRating();
-        this.balance = customer.getBalance();
+    private boolean license;
+    public DriverDto(Driver driver) {
+        this.id = driver.getId();
+        this.name = driver.getName();
+        this.surname = driver.getSurname();
+        this.email = driver.getEmail();
+        this.phoneNumber = driver.getPhoneNumber();
+        this.balance = driver.getBalance();
+        this.license = driver.getLicense();
     }
 
-    public CustomerDto() {
+    public DriverDto() {
     }
 
-    public CustomerDto(long id, String name, String surname, String email, String phoneNumber, double rating, double balance) {
+    public DriverDto(long id, String name, String surname, String email, String phoneNumber, double balance, boolean license) {
         this.id = id;
         this.name = name;
         this.surname = surname;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.rating = rating;
         this.balance = balance;
+        this.license = license;
     }
 
     public long getId() {
@@ -74,19 +73,19 @@ public class CustomerDto {
         this.phoneNumber = phoneNumber;
     }
 
-    public double getRating() {
-        return rating;
-    }
-
-    public void setRating(double rating) {
-        this.rating = rating;
-    }
-
     public double getBalance() {
         return balance;
     }
 
     public void setBalance(double balance) {
         this.balance = balance;
+    }
+
+    public boolean isLicense() {
+        return license;
+    }
+
+    public void setLicense(boolean license) {
+        this.license = license;
     }
 }

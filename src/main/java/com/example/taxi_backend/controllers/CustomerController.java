@@ -1,16 +1,13 @@
 package com.example.taxi_backend.controllers;
 
 import com.example.taxi_backend.dtos.CustomerDto;
+import com.example.taxi_backend.dtos.balance.TopUpBalanceDto;
 import com.example.taxi_backend.dtos.trip.TripResponseDto;
 import com.example.taxi_backend.entities.Customer;
 import com.example.taxi_backend.entities.Trip;
 import com.example.taxi_backend.repositories.CustomerRepository;
-import kotlin.collections.EmptySet;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -47,5 +44,21 @@ public class CustomerController {
         }
 
         return ResponseEntity.ok(tripResponseDtos);
+    }
+    @PostMapping("/balance")
+    public ResponseEntity<Boolean> topUpBalance(@RequestBody TopUpBalanceDto topUpBalanceDto){
+        Customer customer = customerRepository.findById(topUpBalanceDto.getUserId()).get();
+
+
+        if(customer != null){
+            customer.setBalance(customer.getBalance() + topUpBalanceDto.getSum());
+
+            customerRepository.save(customer);
+
+            return ResponseEntity.ok(true);
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

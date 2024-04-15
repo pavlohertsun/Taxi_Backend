@@ -19,7 +19,7 @@ public class Driver {
     private String email;
     @Column(name = "phone_number")
     private String phoneNumber;
-    private String license;
+    private boolean license;
     private double balance;
     @JsonIgnore
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
@@ -28,7 +28,7 @@ public class Driver {
     public Driver() {
     }
 
-    public Driver(String name, String surname, String email, String phoneNumber, String license, double balance) {
+    public Driver(String name, String surname, String email, String phoneNumber, boolean license, double balance) {
         this.name = name;
         this.surname = surname;
         this.email  = email;
@@ -77,11 +77,11 @@ public class Driver {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getLicense() {
+    public boolean getLicense() {
         return license;
     }
 
-    public void setLicense(String license) {
+    public void setLicense(boolean license) {
         this.license = license;
     }
 
