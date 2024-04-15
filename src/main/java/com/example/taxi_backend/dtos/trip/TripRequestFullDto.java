@@ -2,7 +2,9 @@ package com.example.taxi_backend.dtos.trip;
 
 import java.sql.Timestamp;
 
-public class TripRequestDto {
+public class TripRequestFullDto {
+    private long id;
+    private Timestamp startTime;
     private String startPoint;
     private String endPoint;
     private double price;
@@ -10,7 +12,26 @@ public class TripRequestDto {
     private String rate;
     private String description;
     private long customerId;
+    private long driverId;
 
+    public TripRequestFullDto() {
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public Timestamp getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Timestamp startTime) {
+        this.startTime = startTime;
+    }
 
     public String getStartPoint() {
         return startPoint;
@@ -66,5 +87,13 @@ public class TripRequestDto {
 
     public void setCustomerId(long customerId) {
         this.customerId = customerId;
+    }
+
+    public long getDriverId() {
+        return driverId;
+    }
+
+    public void setDriverId(long driverId) {
+        this.driverId = driverId;
     }
 }

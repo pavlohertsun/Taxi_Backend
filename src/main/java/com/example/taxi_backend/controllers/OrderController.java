@@ -31,8 +31,9 @@ public class OrderController {
         Trip trip = tripMapper.mapTripDtoToEntity(tripRequestDto);
 
         Trip createdTrip = tripRepository.save(trip);
+        Trip tripToReturn = tripRepository.findById(createdTrip.getId()).get();
 
-        return createdTrip;
+        return tripToReturn;
     }
     @MessageMapping("/applyTrip")
     @SendTo("/topic/public1")
@@ -43,6 +44,33 @@ public class OrderController {
 
         Driver driver = driverRepository.findById(tripDto.getDriverId()).get();
 
-        return new DriverResponseDto(driver.getName(), driver.getSurname());
+        return new DriverResponseDto(driver.getName(), driver.getPhoneNumber(), false,  false);
+    }
+
+    @MessageMapping("/arrived")
+    @SendTo("/topic/public1")
+    public DriverResponseDto driverArrived(@Payload long id){
+        Driver driver = driverRepository.findById(id).get();
+
+        return new DriverResponseDto(driver.getName(), driver.getPhoneNumber(), true, false);
+    }
+    @MessageMapping("/end")
+    @SendTo("/topic/public1")
+    public DriverResponseDto endTrip(@Payload long id){
+        Driver driver = driverRepository.findById(id).get();
+
+        return new DriverResponseDto(driver.getName(), driver.getPhoneNumber(), true, true);
+    }
+
+    @MessageMapping("/cancel")
+    @SendTo("/topic/public2")
+    public boolean cancelTrip(@Payload long id){
+        Trip trip = tripRepository.findById(id).get();
+
+        trip.setStatus("Cancelled");
+
+        tripRepository.save(trip);
+
+        return true;
     }
 }

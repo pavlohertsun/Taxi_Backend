@@ -2,6 +2,7 @@ package com.example.taxi_backend.mappers;
 
 import com.example.taxi_backend.dtos.trip.TripRequestDto;
 import com.example.taxi_backend.dtos.trip.TripRequestFromDriverDto;
+import com.example.taxi_backend.dtos.trip.TripRequestFullDto;
 import com.example.taxi_backend.entities.Customer;
 import com.example.taxi_backend.entities.Driver;
 import com.example.taxi_backend.entities.Trip;
@@ -23,7 +24,6 @@ public class TripMapper {
         Customer customer = customerRepository.findById(tripRequestDto.getCustomerId()).get();
         Trip trip = new Trip();
 
-        trip.setStartTime(tripRequestDto.getStartTime());
         trip.setStartPoint(tripRequestDto.getStartPoint());
         trip.setEndPoint(tripRequestDto.getEndPoint());
         trip.setPrice(tripRequestDto.getPrice());
@@ -47,6 +47,24 @@ public class TripMapper {
         trip.setStatus(tripRequestFromDriverDto.getStatus());
         trip.setRate(tripRequestFromDriverDto.getRate());
         trip.setDescription(tripRequestFromDriverDto.getDescription());
+        trip.setUser(customer);
+        trip.setDriver(driver);
+
+        return trip;
+    }
+    public Trip mapFromFullDtoToEntity(TripRequestFullDto tripRequestFullDto){
+        Driver driver = driverRepository.findById(tripRequestFullDto.getDriverId()).get();
+        Customer customer = customerRepository.findById(tripRequestFullDto.getCustomerId()).get();
+        Trip trip = new Trip();
+
+        trip.setId(tripRequestFullDto.getId());
+        trip.setStartTime(tripRequestFullDto.getStartTime());
+        trip.setStartPoint(tripRequestFullDto.getStartPoint());
+        trip.setEndPoint(tripRequestFullDto.getEndPoint());
+        trip.setPrice(tripRequestFullDto.getPrice());
+        trip.setStatus(tripRequestFullDto.getStatus());
+        trip.setRate(tripRequestFullDto.getRate());
+        trip.setDescription(tripRequestFullDto.getDescription());
         trip.setUser(customer);
         trip.setDriver(driver);
 
