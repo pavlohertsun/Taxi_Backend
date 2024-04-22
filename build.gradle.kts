@@ -29,6 +29,7 @@ dependencies {
 
     implementation ("org.springframework.boot:spring-boot-starter-websocket")
     implementation ("com.google.maps:google-maps-services:0.15.0")
+    implementation ("org.springframework:spring-messaging")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")

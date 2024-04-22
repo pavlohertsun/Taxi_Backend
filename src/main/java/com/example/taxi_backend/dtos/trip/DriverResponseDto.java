@@ -1,8 +1,10 @@
 package com.example.taxi_backend.dtos.trip;
 
 public class DriverResponseDto {
+    private long id;
     private String name;
     private String surname;
+    private String licensePlate;
     private boolean arrived;
     private boolean ended;
 
@@ -10,11 +12,21 @@ public class DriverResponseDto {
     public DriverResponseDto() {
     }
 
-    public DriverResponseDto(String name, String surname, boolean arrived, boolean ended) {
+    public DriverResponseDto(long id, String name, String surname, String licensePlate, boolean arrived, boolean ended) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
+        this.licensePlate = licensePlate;
         this.arrived = arrived;
         this.ended = ended;
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     public String getName() {
@@ -46,5 +58,13 @@ public class DriverResponseDto {
 
     public void setEnded(boolean ended) {
         this.ended = ended;
+    }
+
+    public String getLicensePlate() {
+        return licensePlate;
+    }
+
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
     }
 }

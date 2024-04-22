@@ -12,8 +12,12 @@ import com.example.taxi_backend.repositories.TripRepository;
 import com.example.taxi_backend.services.PriceCalculatorService;
 import com.example.taxi_backend.services.RoutLengthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/trip")
@@ -53,6 +57,24 @@ public class TripController {
         tripRepository.save(trip);
 
         return true;
+    }
+    @GetMapping("getInProgressTrips")
+    public List<Trip> getAllInProgressTrips(){
+        List<Trip> trips = tripRepository.findByStatus("Created");
+
+        if(trips != null){
+            return trips;
+        }
+
+        return null;
+    }
+    @GetMapping("cancel/{id}")
+    public void cancelTrip(@PathVariable long id){
+        Trip trip = tripRepository.findById(id).get();
+
+        trip.setStatus("Cancelled");
+
+        tripRepository.save(trip);
     }
 
 }

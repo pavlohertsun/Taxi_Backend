@@ -4,7 +4,8 @@ CREATE TABLE customers(
   surname VARCHAR(50),
   email VARCHAR(50),
   phone_number VARCHAR(20),
-  rating DECIMAL(3,2)
+  rating DECIMAL(3,2),
+  balance NUMERIC
 );
 
 CREATE TABLE drivers(
@@ -13,7 +14,8 @@ CREATE TABLE drivers(
   surname VARCHAR(50),
   email VARCHAR(50),
   phone_number VARCHAR(50),
-  license VARCHAR(50),
+  license BOOLEAN,
+  status VARCHAR(30) CHECK(status IN ('Authenticated', 'Non-authenticated')),
   balance NUMERIC
 );
 
@@ -24,7 +26,7 @@ CREATE TABLE trips(
   start_point VARCHAR(100),
   end_point VARCHAR(100),
   price NUMERIC,
-  status VARCHAR(20) CHECK(status IN ('In progress', 'Completed', 'Cancelled')),
+  status VARCHAR(20) CHECK(status IN ('Created', 'In progress', 'Completed', 'Cancelled')),
   rate VARCHAR(20) CHECK(rate IN ('Low', 'Normal', 'High')),
   description TEXT,
   customer_id BIGINT,
@@ -34,8 +36,8 @@ CREATE TABLE trips(
 CREATE TABLE cars(
   id BIGINT PRIMARY KEY,
   license_plate VARCHAR(30),
-  document VARCHAR(300),
-  type VARCHAR(20) CHECK(type IN('Economy', 'Standart', 'Comfort', 'Business'))
+  document BOOLEAN,
+  type VARCHAR(20) CHECK(type IN('Economy', 'Standard', 'Comfort', 'Business'))
 );
 
 CREATE TABLE trips_rating(
@@ -50,15 +52,6 @@ CREATE TABLE transactions(
   sum NUMERIC,
   status VARCHAR(20) CHECK(status IN ('In progress', 'Completed', 'Cancelled')),
   trip_id BIGINT
-);
-
-CREATE TABLE accountings(
-  id BIGINT PRIMARY KEY,
-  start_date TIMESTAMP,
-  end_date TIMESTAMP,
-  incomes NUMERIC,
-  expenses NUMERIC,
-  profit NUMERIC
 );
 
 CREATE TABLE incomes(
@@ -115,13 +108,17 @@ CREATE TABLE users(
     role INT
 );
 
+CREATE TABLE settings(
+    rate VARCHAR(20) PRIMARY KEY CHECK(rate IN ('Low', 'Normal', 'High')),
+    percent INT
+);
+
 CREATE SEQUENCE customers_seq START 1;
 CREATE SEQUENCE drivers_seq START 1;
 CREATE SEQUENCE trips_seq START 1;
 CREATE SEQUENCE cars_seq START 1;
 CREATE SEQUENCE trips_rating_seq START 1;
 CREATE SEQUENCE transactions_seq START 1;
-CREATE SEQUENCE accountings_seq START 1;
 CREATE SEQUENCE incomes_seq START 1;
 CREATE SEQUENCE expenses_seq START 1;
 CREATE SEQUENCE drivers_payment_seq START 1;
@@ -136,7 +133,6 @@ ALTER TABLE trips ALTER COLUMN id SET DEFAULT nextval('trips_seq');
 ALTER TABLE cars ALTER COLUMN id SET DEFAULT nextval('cars_seq');
 ALTER TABLE trips_rating ALTER COLUMN id SET DEFAULT nextval('trips_rating_seq');
 ALTER TABLE transactions ALTER COLUMN id SET DEFAULT nextval('transactions_seq');
-ALTER TABLE accountings ALTER COLUMN id SET DEFAULT nextval('accountings_seq');
 ALTER TABLE incomes ALTER COLUMN id SET DEFAULT nextval('incomes_seq');
 ALTER TABLE expenses ALTER COLUMN id SET DEFAULT nextval('expenses_seq');
 ALTER TABLE drivers_payment ALTER COLUMN id SET DEFAULT nextval('drivers_payment_seq');
@@ -180,16 +176,6 @@ ADD CONSTRAINT transactions_id_fk
 FOREIGN KEY (id)
 REFERENCES transactions(id);
 
-ALTER TABLE incomes
-ADD CONSTRAINT accountings_id_fk
-FOREIGN KEY (accounting_id)
-REFERENCES accountings(id);
-
-ALTER TABLE expenses
-ADD CONSTRAINT accountings_id_fk
-FOREIGN KEY (accounting_id)
-REFERENCES accountings(id);
-
 ALTER TABLE support_requests
 ADD CONSTRAINT employees_id_fk
 FOREIGN KEY (employee_id)
@@ -210,7 +196,7 @@ ADD CONSTRAINT drivers_id_fk
 FOREIGN KEY (id)
 REFERENCES drivers(id);
 
-ALTER TABLE users
+ALTER TABLE customers
 ADD CONSTRAINT user_id_fk
 FOREIGN KEY (id)
 REFERENCES users(id);
@@ -224,3 +210,46 @@ ALTER TABLE employees
 ADD CONSTRAINT user_id_fk
 FOREIGN KEY (id)
 REFERENCES users(id);
+
+CREATE OR REPLACE FUNCTION add_start_time()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.start_time := CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER insert_start_time_trigger
+BEFORE INSERT ON trips
+FOR EACH ROW
+EXECUTE FUNCTION add_start_time();
+
+CREATE OR REPLACE FUNCTION update_end_time()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.status = 'Completed' THEN
+    NEW.end_time := CURRENT_TIMESTAMP;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_end_time_trigger
+BEFORE UPDATE ON trips
+FOR EACH ROW
+EXECUTE FUNCTION update_end_time();
+
+CREATE OR REPLACE FUNCTION update_end_time_on_cancel()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.status = 'Cancelled' THEN
+    NEW.end_time := CURRENT_TIMESTAMP;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER update_end_time_on_cancel_trigger
+BEFORE UPDATE ON trips
+FOR EACH ROW
+EXECUTE FUNCTION update_end_time_on_cancel();

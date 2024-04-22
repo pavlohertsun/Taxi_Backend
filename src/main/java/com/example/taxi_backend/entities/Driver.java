@@ -10,7 +10,6 @@ import java.util.Set;
 @Table(name = "drivers")
 public class Driver {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     private String name;
@@ -20,6 +19,7 @@ public class Driver {
     @Column(name = "phone_number")
     private String phoneNumber;
     private boolean license;
+    private String status;
     private double balance;
     @JsonIgnore
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
@@ -28,12 +28,14 @@ public class Driver {
     public Driver() {
     }
 
-    public Driver(String name, String surname, String email, String phoneNumber, boolean license, double balance) {
+    public Driver(long id, String name, String surname, String email, String phoneNumber, boolean license, String status, double balance) {
+        this.id = id;
         this.name = name;
         this.surname = surname;
-        this.email  = email;
+        this.email = email;
         this.phoneNumber = phoneNumber;
         this.license = license;
+        this.status = status;
         this.balance = balance;
     }
 
@@ -99,6 +101,18 @@ public class Driver {
 
     public void setTrips(Set<Trip> trips) {
         this.trips = trips;
+    }
+
+    public boolean isLicense() {
+        return license;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

@@ -3,27 +3,35 @@ package com.example.taxi_backend.controllers;
 import com.example.taxi_backend.dtos.trip.DriverResponseDto;
 import com.example.taxi_backend.dtos.trip.TripRequestDto;
 import com.example.taxi_backend.dtos.trip.TripRequestFromDriverDto;
+import com.example.taxi_backend.entities.Car;
 import com.example.taxi_backend.entities.Driver;
 import com.example.taxi_backend.entities.Trip;
 import com.example.taxi_backend.mappers.TripMapper;
+import com.example.taxi_backend.repositories.CarRepository;
 import com.example.taxi_backend.repositories.DriverRepository;
 import com.example.taxi_backend.repositories.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 
 @Controller
 public class OrderController {
     private TripRepository tripRepository;
     private DriverRepository driverRepository;
+    private CarRepository carRepository;
     private TripMapper tripMapper;
+    private SimpMessagingTemplate messagingTemplate;
     @Autowired
-    public OrderController(TripRepository tripRepository, TripMapper tripMapper, DriverRepository driverRepository){
+    public OrderController(TripRepository tripRepository, TripMapper tripMapper, DriverRepository driverRepository, SimpMessagingTemplate messagingTemplate, CarRepository carRepository){
         this.tripRepository = tripRepository;
         this.tripMapper = tripMapper;
         this.driverRepository = driverRepository;
+        this.messagingTemplate = messagingTemplate;
+        this.carRepository = carRepository;
     }
     @MessageMapping("/createTrip")
     @SendTo("/topic/public")
@@ -35,42 +43,44 @@ public class OrderController {
 
         return tripToReturn;
     }
-    @MessageMapping("/applyTrip")
-    @SendTo("/topic/public1")
-    public DriverResponseDto applyTrip(@Payload TripRequestFromDriverDto tripDto){
+    @MessageMapping("/applyTrip/{id}")
+    public void applyTrip(@Payload TripRequestFromDriverDto tripDto, @DestinationVariable Long id){
         Trip trip = tripMapper.mapTripDriverDtoToEntity(tripDto);
 
         tripRepository.save(trip);
 
         Driver driver = driverRepository.findById(tripDto.getDriverId()).get();
+        Car car = carRepository.findById(tripDto.getDriverId()).get();
 
-        return new DriverResponseDto(driver.getName(), driver.getPhoneNumber(), false,  false);
+
+        messagingTemplate.convertAndSend("/topic/public1/" + id, new DriverResponseDto(driver.getId(), driver.getName(), driver.getPhoneNumber(), car.getLicensePlate(),false,  false));
+
     }
 
-    @MessageMapping("/arrived")
-    @SendTo("/topic/public1")
-    public DriverResponseDto driverArrived(@Payload long id){
-        Driver driver = driverRepository.findById(id).get();
+    @MessageMapping("/arrived/{id}")
+    public void driverArrived(@Payload long driverId, @DestinationVariable Long id){
+        Driver driver = driverRepository.findById(driverId).get();
+        Car car = carRepository.findById(driverId).get();
 
-        return new DriverResponseDto(driver.getName(), driver.getPhoneNumber(), true, false);
+        messagingTemplate.convertAndSend("/topic/public1/" + id, new DriverResponseDto(driver.getId(), driver.getName(), driver.getPhoneNumber(), car.getLicensePlate(),true,  false));
     }
-    @MessageMapping("/end")
-    @SendTo("/topic/public1")
-    public DriverResponseDto endTrip(@Payload long id){
-        Driver driver = driverRepository.findById(id).get();
+    @MessageMapping("/end/{id}")
+    public void endTrip(@Payload long driverId, @DestinationVariable Long id){
+        Driver driver = driverRepository.findById(driverId).get();
+        Car car = carRepository.findById(driverId).get();
 
-        return new DriverResponseDto(driver.getName(), driver.getPhoneNumber(), true, true);
+        messagingTemplate.convertAndSend("/topic/public1/" + id, new DriverResponseDto(driver.getId(), driver.getName(), driver.getPhoneNumber(), car.getLicensePlate(),true,  true));
     }
 
     @MessageMapping("/cancel")
-    @SendTo("/topic/public2")
-    public boolean cancelTrip(@Payload long id){
-        Trip trip = tripRepository.findById(id).get();
+    public void cancelTrip(@Payload long tripId){
+        Trip trip = tripRepository.findById(tripId).get();
 
         trip.setStatus("Cancelled");
 
         tripRepository.save(trip);
 
-        return true;
+        messagingTemplate.convertAndSend("/topic/public2", true);
+
     }
 }

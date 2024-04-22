@@ -29,9 +29,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(req ->
                         req
-//                                .requestMatchers("/api/auth/**").permitAll()
-//                                .requestMatchers("/taxi").permitAll()
-//                                .anyRequest().authenticated()
+//                                .requestMatchers("/api/**").authenticated()
+//                                .anyRequest().permitAll()
                                 .anyRequest().permitAll()
                 )
                 .csrf(CsrfConfigurer::disable)
@@ -48,7 +47,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(List.of("http://localhost:8080","http://localhost:8083", "http://localhost:4200"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedMethods(List.of("GET", "POST", "OPTIONS"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "OPTIONS", "PUT"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
