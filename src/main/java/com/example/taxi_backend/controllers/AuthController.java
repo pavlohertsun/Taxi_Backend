@@ -2,12 +2,10 @@ package com.example.taxi_backend.controllers;
 
 import com.example.taxi_backend.dtos.*;
 import com.example.taxi_backend.dtos.auth_responce.AuthResponseDto;
-import com.example.taxi_backend.entities.Customer;
-import com.example.taxi_backend.entities.Driver;
-import com.example.taxi_backend.entities.Role;
-import com.example.taxi_backend.entities.User;
+import com.example.taxi_backend.entities.*;
 import com.example.taxi_backend.repositories.CustomerRepository;
 import com.example.taxi_backend.repositories.DriverRepository;
+import com.example.taxi_backend.repositories.LogRepository;
 import com.example.taxi_backend.repositories.UserRepository;
 import com.example.taxi_backend.security.JwtService;
 import com.example.taxi_backend.security.UserService;
@@ -30,11 +28,13 @@ public class AuthController {
     private UserRepository userRepository;
     private CustomerRepository customerRepository;
     private DriverRepository driverRepository;
+    private LogRepository logRepository;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserService userService,
                           PasswordEncoder passwordEncoder, JwtService jwtGenerator,
-                          UserRepository userRepository, CustomerRepository customerRepository, DriverRepository driverRepository) {
+                          UserRepository userRepository, CustomerRepository customerRepository, DriverRepository driverRepository,
+                          LogRepository logRepository) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
@@ -42,6 +42,7 @@ public class AuthController {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.driverRepository = driverRepository;
+        this.logRepository = logRepository;
     }
 
     @PostMapping("login")
@@ -50,6 +51,11 @@ public class AuthController {
                 new UsernamePasswordAuthenticationToken(
                         loginDto.getUsername(),
                         loginDto.getPassword()));
+
+        Log log = new Log();
+        log.setMessage("User with email: " + loginDto.getUsername() + " authorized.");
+        logRepository.save(log);
+
         return ResponseEntity
                 .ok()
                 .body(
@@ -79,6 +85,10 @@ public class AuthController {
 
             customerRepository.save(customer);
 
+            Log log = new Log();
+            log.setMessage("New customer registered with id: " + createdUser.getId() + ".");
+            logRepository.save(log);
+
         }
         else{
             Driver driver = new Driver();
@@ -92,6 +102,10 @@ public class AuthController {
             driver.setStatus("Non-authenticated");
 
             driverRepository.save(driver);
+
+            Log log = new Log();
+            log.setMessage("New driver registered with id: " + createdUser.getId() + ".");
+            logRepository.save(log);
         }
 
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);

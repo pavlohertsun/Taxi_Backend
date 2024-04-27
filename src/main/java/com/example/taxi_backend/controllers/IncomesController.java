@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,35 +20,39 @@ import java.util.List;
 @RequestMapping("/api/incomes")
 public class IncomesController {
     private IncomeRepository incomeRepository;
+
     @Autowired
     public IncomesController(IncomeRepository incomeRepository) {
         this.incomeRepository = incomeRepository;
     }
 
-    @GetMapping("/{month}")
-    public List<IncomeDto> getAllCurrentMonthIncomesTransactions(@PathVariable Integer month){
-        LocalDateTime startOfMonth = LocalDateTime.of(LocalDate.now().getYear(), month, 1, 0, 0, 0);
-        LocalDateTime endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
+    @GetMapping("/{date}")
+    public List<IncomeDto> getAllCurrentIncomesTransactionsInMonth(@PathVariable String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startOfMonth = LocalDateTime.parse(date, formatter);
+        LocalDateTime endOfMonth = startOfMonth.plusDays(1);
 
         List<Income> incomes = incomeRepository.findAllByDateBetween(startOfMonth, endOfMonth);
 
         List<IncomeDto> incomeDtos = new ArrayList<>();
 
-        for (Income income : incomes){
+        for (Income income : incomes) {
             incomeDtos.add(new IncomeDto(income));
         }
 
         return incomeDtos;
     }
-    @GetMapping("/sum/{month}")
-    public Double getSumOfIncomes(@PathVariable Integer month){
-        LocalDateTime startOfMonth = LocalDateTime.of(LocalDate.now().getYear(), month, 1, 0, 0, 0);
-        LocalDateTime endOfMonth = startOfMonth.with(TemporalAdjusters.lastDayOfMonth()).with(LocalTime.MAX);
+
+    @GetMapping("/sum/{date}")
+    public Double getSumOfIncomes(@PathVariable String date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        LocalDateTime startOfMonth = LocalDateTime.parse(date, formatter);
+        LocalDateTime endOfMonth = startOfMonth.plusDays(1);
 
         List<Income> incomes = incomeRepository.findAllByDateBetween(startOfMonth, endOfMonth);
         double sum = 0;
 
-        for (Income income : incomes){
+        for (Income income : incomes) {
             sum += income.getSum();
         }
         return sum;

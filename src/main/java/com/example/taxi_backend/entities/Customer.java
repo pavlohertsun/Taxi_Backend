@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,6 +27,10 @@ public class Customer {
     @JsonIgnore
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private Set<Trip> trips = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
+    private List<SupportRequest> requests = new ArrayList<>();
 
     public Customer() {
     }
@@ -100,6 +106,14 @@ public class Customer {
 
     public void setTrips(Set<Trip> trips) {
         this.trips = trips;
+    }
+
+    public List<SupportRequest> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<SupportRequest> requests) {
+        this.requests = requests;
     }
 
     @Override

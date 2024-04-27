@@ -6,8 +6,10 @@ import com.example.taxi_backend.dtos.trip.TripRequestDto;
 import com.example.taxi_backend.dtos.trip.TripRequestFromDriverDto;
 import com.example.taxi_backend.dtos.trip.TripRequestFullDto;
 import com.example.taxi_backend.dtos.trip.TripResponseForDriverDto;
+import com.example.taxi_backend.entities.Log;
 import com.example.taxi_backend.entities.Trip;
 import com.example.taxi_backend.mappers.TripMapper;
+import com.example.taxi_backend.repositories.LogRepository;
 import com.example.taxi_backend.repositories.TripRepository;
 import com.example.taxi_backend.services.PriceCalculatorService;
 import com.example.taxi_backend.services.RoutLengthService;
@@ -27,15 +29,17 @@ public class TripController {
     private PriceCalculatorService priceCalculatorService;
     private TripRepository tripRepository;
     private TripMapper tripMapper;
+    private LogRepository logRepository;
     @Autowired
     public TripController(RoutLengthService routLengthService, PriceCalculatorService priceCalculatorService,
                           AuthenticationManager authenticationManager, TripRepository tripRepository,
-                          TripMapper tripMapper){
+                          TripMapper tripMapper, LogRepository logRepository){
         this.routLengthService = routLengthService;
         this.priceCalculatorService = priceCalculatorService;
         this.authenticationManager = authenticationManager;
         this.tripRepository = tripRepository;
         this.tripMapper = tripMapper;
+        this.logRepository = logRepository;
     }
     @PostMapping("calculate")
     public PriceResponseDto calculateCost(@RequestBody PriceRequestDto priceRequestDto){
@@ -55,6 +59,10 @@ public class TripController {
         Trip trip = tripMapper.mapFromFullDtoToEntity(tripRequestFullDto);
 
         tripRepository.save(trip);
+
+        Log log = new Log();
+        log.setMessage("Trip #" + tripRequestFullDto.getId() + " was ended.");
+        logRepository.save(log);
 
         return true;
     }

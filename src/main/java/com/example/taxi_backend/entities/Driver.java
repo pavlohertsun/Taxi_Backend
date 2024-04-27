@@ -3,7 +3,9 @@ package com.example.taxi_backend.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -24,6 +26,10 @@ public class Driver {
     @JsonIgnore
     @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
     private Set<Trip> trips = new HashSet<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "driver", fetch = FetchType.LAZY)
+    private List<SupportRequest> requests = new ArrayList<>();
 
     public Driver() {
     }
@@ -113,6 +119,14 @@ public class Driver {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<SupportRequest> getRequests() {
+        return requests;
+    }
+
+    public void setRequests(List<SupportRequest> requests) {
+        this.requests = requests;
     }
 
     @Override

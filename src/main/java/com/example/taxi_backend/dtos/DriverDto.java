@@ -10,6 +10,7 @@ public class DriverDto {
     private String phoneNumber;
     private double balance;
     private boolean license;
+    private String status;
     public DriverDto(Driver driver) {
         this.id = driver.getId();
         this.name = driver.getName();
@@ -18,6 +19,7 @@ public class DriverDto {
         this.phoneNumber = driver.getPhoneNumber();
         this.balance = driver.getBalance();
         this.license = driver.getLicense();
+        this.status = driver.getStatus();
     }
 
     public DriverDto() {
@@ -87,5 +89,13 @@ public class DriverDto {
 
     public void setLicense(boolean license) {
         this.license = license;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

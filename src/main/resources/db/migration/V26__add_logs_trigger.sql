@@ -1,0 +1,12 @@
+CREATE OR REPLACE FUNCTION insert_log_date()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.date := CURRENT_TIMESTAMP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER insert_log_date_trigger
+BEFORE INSERT ON logs
+FOR EACH ROW
+EXECUTE FUNCTION insert_log_date();

@@ -5,10 +5,12 @@ import com.example.taxi_backend.dtos.trip.TripRequestDto;
 import com.example.taxi_backend.dtos.trip.TripRequestFromDriverDto;
 import com.example.taxi_backend.entities.Car;
 import com.example.taxi_backend.entities.Driver;
+import com.example.taxi_backend.entities.Log;
 import com.example.taxi_backend.entities.Trip;
 import com.example.taxi_backend.mappers.TripMapper;
 import com.example.taxi_backend.repositories.CarRepository;
 import com.example.taxi_backend.repositories.DriverRepository;
+import com.example.taxi_backend.repositories.LogRepository;
 import com.example.taxi_backend.repositories.TripRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -24,14 +26,18 @@ public class OrderController {
     private DriverRepository driverRepository;
     private CarRepository carRepository;
     private TripMapper tripMapper;
+    private LogRepository logRepository;
     private SimpMessagingTemplate messagingTemplate;
     @Autowired
-    public OrderController(TripRepository tripRepository, TripMapper tripMapper, DriverRepository driverRepository, SimpMessagingTemplate messagingTemplate, CarRepository carRepository){
+    public OrderController(TripRepository tripRepository, TripMapper tripMapper,
+                           DriverRepository driverRepository, SimpMessagingTemplate messagingTemplate,
+                           CarRepository carRepository, LogRepository logRepository){
         this.tripRepository = tripRepository;
         this.tripMapper = tripMapper;
         this.driverRepository = driverRepository;
         this.messagingTemplate = messagingTemplate;
         this.carRepository = carRepository;
+        this.logRepository = logRepository;
     }
     @MessageMapping("/createTrip")
     @SendTo("/topic/public")
@@ -40,6 +46,10 @@ public class OrderController {
 
         Trip createdTrip = tripRepository.save(trip);
         Trip tripToReturn = tripRepository.findById(createdTrip.getId()).get();
+
+        Log log = new Log();
+        log.setMessage("Customer #" + tripRequestDto.getCustomerId() + " ordered a trip #" + tripToReturn.getId() + ".");
+        logRepository.save(log);
 
         return tripToReturn;
     }
@@ -52,8 +62,18 @@ public class OrderController {
         Driver driver = driverRepository.findById(tripDto.getDriverId()).get();
         Car car = carRepository.findById(tripDto.getDriverId()).get();
 
+        Log log = new Log();
+        log.setMessage("Driver #" + tripDto.getDriverId() + " applied a trip #" + tripDto.getId() + ".");
+        logRepository.save(log);
 
-        messagingTemplate.convertAndSend("/topic/public1/" + id, new DriverResponseDto(driver.getId(), driver.getName(), driver.getPhoneNumber(), car.getLicensePlate(),false,  false));
+        messagingTemplate.convertAndSend("/topic/public1/" + id,
+                new DriverResponseDto(
+                        driver.getId(),
+                        driver.getName(),
+                        driver.getPhoneNumber(),
+                        car.getLicensePlate(),
+                        false,
+                        false));
 
     }
 
@@ -79,6 +99,10 @@ public class OrderController {
         trip.setStatus("Cancelled");
 
         tripRepository.save(trip);
+
+        Log log = new Log();
+        log.setMessage("Trip #" + tripId + "was cancelled.");
+        logRepository.save(log);
 
         messagingTemplate.convertAndSend("/topic/public2", true);
 
