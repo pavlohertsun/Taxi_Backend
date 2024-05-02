@@ -1,5 +1,6 @@
 package com.example.taxi_backend.dtos.trip;
 
+import com.example.taxi_backend.entities.Driver;
 import com.example.taxi_backend.entities.Trip;
 
 import java.sql.Timestamp;
@@ -25,8 +26,18 @@ public class TripResponseDto {
         this.status = trip.getStatus();
         this.rate = trip.getRate();
         this.description = trip.getDescription();
-        this.driverName = trip.getDriver().getName();
-        this.driverSurname = trip.getDriver().getSurname();
+        if(trip.getDriver() == null){
+            Driver driver = new Driver();
+            driver.setName("");
+            driver.setSurname("");
+
+            this.driverName = driver.getName();
+            this.driverSurname = driver.getSurname();
+        }
+        else {
+            this.driverName = trip.getDriver().getName();
+            this.driverSurname = trip.getDriver().getSurname();
+        }
     }
 
     public TripResponseDto() {

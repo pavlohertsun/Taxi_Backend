@@ -13,8 +13,6 @@ public class Car {
 
     private boolean document;
 
-    private String type;
-
     public Car() {
     }
 
@@ -22,7 +20,6 @@ public class Car {
         this.id = id;
         this.licensePlate = licensePlate;
         this.document = document;
-        this.type = type;
     }
 
     public long getId() {
@@ -49,11 +46,4 @@ public class Car {
         this.document = document;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

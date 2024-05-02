@@ -6,6 +6,7 @@ import com.example.taxi_backend.entities.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,7 @@ public class JwtService {
     private final String USERNAME_CLAIMS_FIELD = "username";
     private final String ROLE_CLAIMS_FIELD = "role";
 
+    @Autowired
     public JwtService(UserService userService) {
         this.userService = userService;
     }

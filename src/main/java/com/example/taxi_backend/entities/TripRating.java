@@ -32,14 +32,6 @@ public class TripRating {
         this.id = id;
     }
 
-    public int getCRate() {
-        return cRate;
-    }
-
-    public void setCRate(int rate) {
-        this.cRate = rate;
-    }
-
     public String getComment() {
         return comment;
     }

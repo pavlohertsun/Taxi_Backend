@@ -156,4 +156,25 @@ public class DriverController {
                 .header("Content-Disposition", "attachment; filename=driverData.json")
                 .body(jsonDataBytes);
     }
+
+    @GetMapping("/car/{id}")
+    public ResponseEntity<Boolean> checkIfDriverRegisteredCar(@PathVariable long id){
+        Optional<Car> car = carRepository.findById(id);
+
+        if (car.isPresent())
+            return ResponseEntity.ok(true);
+        else
+            return ResponseEntity.notFound().build();
+    }
+
+    @PostMapping("/car")
+    public void registerCar(@RequestBody CarDto carDto){
+        Car car = new Car();
+
+        car.setId(carDto.getId());
+        car.setLicensePlate(carDto.getLicensePlate());
+        car.setDocument(false);
+
+        carRepository.save(car);
+    }
 }

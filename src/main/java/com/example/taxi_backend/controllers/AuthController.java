@@ -3,10 +3,7 @@ package com.example.taxi_backend.controllers;
 import com.example.taxi_backend.dtos.*;
 import com.example.taxi_backend.dtos.auth_responce.AuthResponseDto;
 import com.example.taxi_backend.entities.*;
-import com.example.taxi_backend.repositories.CustomerRepository;
-import com.example.taxi_backend.repositories.DriverRepository;
-import com.example.taxi_backend.repositories.LogRepository;
-import com.example.taxi_backend.repositories.UserRepository;
+import com.example.taxi_backend.repositories.*;
 import com.example.taxi_backend.security.JwtService;
 import com.example.taxi_backend.security.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +26,13 @@ public class AuthController {
     private CustomerRepository customerRepository;
     private DriverRepository driverRepository;
     private LogRepository logRepository;
+    private EmployeeRepository employeeRepository;
 
     @Autowired
     public AuthController(AuthenticationManager authenticationManager, UserService userService,
                           PasswordEncoder passwordEncoder, JwtService jwtGenerator,
                           UserRepository userRepository, CustomerRepository customerRepository, DriverRepository driverRepository,
-                          LogRepository logRepository) {
+                          LogRepository logRepository, EmployeeRepository employeeRepository) {
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
@@ -43,6 +41,7 @@ public class AuthController {
         this.customerRepository = customerRepository;
         this.driverRepository = driverRepository;
         this.logRepository = logRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @PostMapping("login")
@@ -69,13 +68,13 @@ public class AuthController {
 
         user.setUsername(registerCustomerDto.getUsername());
         user.setPassword(passwordEncoder.encode((registerCustomerDto.getPassword())));
-        user.setRole(registerCustomerDto.getRole().equals("User") ? Role.USER : Role.DRIVER);
-
-        User createdUser = userRepository.save(user);
 
         if(registerCustomerDto.getRole().equals("User")){
+            user.setRole(Role.USER);
+
+            userRepository.save(user);
+
             Customer customer = new Customer();
-            customer.setId(createdUser.getId());
             customer.setName(registerCustomerDto.getName());
             customer.setSurname(registerCustomerDto.getSurname());
             customer.setEmail(registerCustomerDto.getUsername());
@@ -83,16 +82,19 @@ public class AuthController {
             customer.setBalance(0);
             customer.setRating(5.0);
 
-            customerRepository.save(customer);
+            Customer created = customerRepository.save(customer);
 
             Log log = new Log();
-            log.setMessage("New customer registered with id: " + createdUser.getId() + ".");
+            log.setMessage("New customer registered with id: " + created.getId() + ".");
             logRepository.save(log);
 
         }
-        else{
+        else if (registerCustomerDto.getRole().equals("Driver")){
+            user.setRole(Role.DRIVER);
+
+            userRepository.save(user);
+
             Driver driver = new Driver();
-            driver.setId(createdUser.getId());
             driver.setName(registerCustomerDto.getName());
             driver.setSurname(registerCustomerDto.getSurname());
             driver.setEmail(registerCustomerDto.getUsername());
@@ -101,11 +103,39 @@ public class AuthController {
             driver.setLicense(false);
             driver.setStatus("Non-authenticated");
 
-            driverRepository.save(driver);
+            Driver created = driverRepository.save(driver);
 
             Log log = new Log();
-            log.setMessage("New driver registered with id: " + createdUser.getId() + ".");
+            log.setMessage("New driver registered with id: " + created.getId() + ".");
             logRepository.save(log);
+        }
+        else if(registerCustomerDto.getRole().equals("Worker")){
+            user.setRole(Role.WORKER);
+
+            userRepository.save(user);
+
+            Employee employee = new Employee();
+            employee.setName(registerCustomerDto.getName());
+            employee.setSurname(registerCustomerDto.getSurname());
+            employee.setEmail(registerCustomerDto.getUsername());
+            employee.setPosition("Support");
+            employee.setSalary(8000);
+
+            employeeRepository.save(employee);
+        }
+        else if (registerCustomerDto.getRole().equals("Admin")) {
+            user.setRole(Role.ADMIN);
+
+            userRepository.save(user);
+
+            Employee employee = new Employee();
+            employee.setName(registerCustomerDto.getName());
+            employee.setSurname(registerCustomerDto.getSurname());
+            employee.setEmail(registerCustomerDto.getUsername());
+            employee.setPosition("Admin");
+            employee.setSalary(10000);
+
+            employeeRepository.save(employee);
         }
 
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);
